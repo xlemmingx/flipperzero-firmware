@@ -48,3 +48,6 @@ build/
 
 # Toolchain
 toolchain*/
+
+# lib (bunch of other git repositories checked out for building)
+lib/

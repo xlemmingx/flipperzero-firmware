@@ -1,0 +1,10 @@
+App(
+    appid="box_mover",
+    name="Box Mover",
+    apptype=FlipperAppType.GAME,
+    entry_point="box_mover_app",
+    cdefines=["APP_BOX_MOVER"],
+    requires=["gui"],
+    stack_size=1 * 1024,
+    order=11,
+)
