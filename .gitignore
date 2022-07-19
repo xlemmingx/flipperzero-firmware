@@ -52,3 +52,6 @@ lib/
 # Toolchain
 toolchain*/
 /toolchain
+
+# openocd output file
+openocd.log

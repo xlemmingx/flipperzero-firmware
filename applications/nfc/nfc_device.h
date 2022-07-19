@@ -18,6 +18,8 @@
 #define NFC_APP_EXTENSION ".nfc"
 #define NFC_APP_SHADOW_EXTENSION ".shd"
 
+typedef void (*NfcLoadingCallback)(void* context, bool state);
+
 typedef enum {
     NfcDeviceProtocolUnknown,
     NfcDeviceProtocolEMV,
@@ -59,6 +61,9 @@ typedef struct {
     string_t load_path;
     NfcDeviceSaveFormat format;
     bool shadow_file_exist;
+
+    NfcLoadingCallback loading_cb;
+    void* loading_cb_ctx;
 } NfcDevice;
 
 NfcDevice* nfc_device_alloc();
@@ -71,7 +76,7 @@ bool nfc_device_save(NfcDevice* dev, const char* dev_name);
 
 bool nfc_device_save_shadow(NfcDevice* dev, const char* dev_name);
 
-bool nfc_device_load(NfcDevice* dev, const char* file_path);
+bool nfc_device_load(NfcDevice* dev, const char* file_path, bool show_dialog);
 
 bool nfc_file_select(NfcDevice* dev);
 
@@ -82,3 +87,5 @@ void nfc_device_clear(NfcDevice* dev);
 bool nfc_device_delete(NfcDevice* dev, bool use_load_path);
 
 bool nfc_device_restore(NfcDevice* dev, bool use_load_path);
+
+void nfc_device_set_loading_callback(NfcDevice* dev, NfcLoadingCallback callback, void* context);

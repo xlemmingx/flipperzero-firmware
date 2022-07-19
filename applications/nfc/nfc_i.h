@@ -18,6 +18,7 @@
 #include <gui/modules/submenu.h>
 #include <gui/modules/dialog_ex.h>
 #include <gui/modules/popup.h>
+#include <gui/modules/loading.h>
 #include <gui/modules/text_input.h>
 #include <gui/modules/byte_input.h>
 #include <gui/modules/text_box.h>
@@ -29,9 +30,20 @@
 #include <nfc/scenes/nfc_scene.h>
 #include <nfc/helpers/nfc_custom_event.h>
 
+#include "rpc/rpc_app.h"
+
 #define NFC_SEND_NOTIFICATION_FALSE (0UL)
 #define NFC_SEND_NOTIFICATION_TRUE (1UL)
 #define NFC_TEXT_STORE_SIZE 128
+
+typedef enum {
+    NfcRpcStateIdle,
+    NfcRpcStateEmulating,
+    NfcRpcStateEmulated,
+} NfcRpcState;
+
+// Forward declaration due to circular dependency
+typedef struct NfcGenerator NfcGenerator;
 
 struct Nfc {
     NfcWorker* worker;
@@ -45,22 +57,29 @@ struct Nfc {
     char text_store[NFC_TEXT_STORE_SIZE + 1];
     string_t text_box_store;
 
+    void* rpc_ctx;
+    NfcRpcState rpc_state;
+
     // Common Views
     Submenu* submenu;
     DialogEx* dialog_ex;
     Popup* popup;
+    Loading* loading;
     TextInput* text_input;
     ByteInput* byte_input;
     TextBox* text_box;
     Widget* widget;
     BankCard* bank_card;
     DictAttack* dict_attack;
+
+    const NfcGenerator* generator;
 };
 
 typedef enum {
     NfcViewMenu,
     NfcViewDialogEx,
     NfcViewPopup,
+    NfcViewLoading,
     NfcViewTextInput,
     NfcViewByteInput,
     NfcViewTextBox,
@@ -80,3 +99,7 @@ void nfc_text_store_clear(Nfc* nfc);
 void nfc_blink_start(Nfc* nfc);
 
 void nfc_blink_stop(Nfc* nfc);
+
+void nfc_show_loading_popup(void* context, bool show);
+
+void nfc_rpc_exit_callback(Nfc* nfc);
